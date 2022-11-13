@@ -1,8 +1,12 @@
 // Constants and variables
-let currOperation = [];
+let prevOperation = [];
+let currOperation = [0];
+
 const numBtns = document.querySelectorAll(".nums");
 const operatorBtns = document.querySelectorAll(".operator");
-const display = document.querySelector(".currentOperationScreen");
+const equalBtn = document.querySelector(".equal-btn");
+const prevDisplay = document.querySelector(".lastOperationScreen");
+const currDisplay = document.querySelector(".currentOperationScreen");
 
 // UI and event handling
 
@@ -10,37 +14,79 @@ function attachEventListenersToBtns() {
   // Numbers
   for (const numBtn of numBtns) {
     numBtn.addEventListener("click", () => {
-      if (isJoinable()) {
+      if (isLastZero()) {
+        currOperation[currOperation.length - 1] = numBtn.dataset.key;
+      } else if (isLastNumber()) {
         currOperation[currOperation.length - 1] += numBtn.dataset.key;
       } else {
         currOperation.push(numBtn.dataset.key);
       }
-      refreshDisplay();
+      refreshCurrDisplay();
     });
   }
   // Operators
   for (const operatorBtn of operatorBtns) {
     operatorBtn.addEventListener("click", () => {
-      currOperation.push(operatorBtn.dataset.key);
-      refreshDisplay();
+      if (isLastNumber()) {
+        currOperation.push(operatorBtn.dataset.key);
+      }
+      refreshCurrDisplay();
     });
   }
   // Equal
-  
+  equalBtn.addEventListener("click", () => {
+    if ((isLastNumber()) & (currOperation.length > 1)) {
+      currOperation.push(equalBtn.dataset.key);
+      shiftOperation();
+      refreshPrevDisplay();
+      let result = calculate(processOperation(prevOperation));
+      currOperation.push(result);
+      refreshCurrDisplay();
+    }
+    else {
+      alert('Please complete operation.')
+    }
+  });
 }
 
-function refreshDisplay() {
-  display.textContent = currOperation.join(" ");
+function processOperation(operation) {}
+
+function calculate(operation) {}
+
+function shiftOperation() {
+  // Copy
+  prevOperation = currOperation;
+  // Clear currOperation
+  currOperation = [];
+}
+
+function refreshPrevDisplay() {
+  prevDisplay.textContent = prevOperation.join(" ");
+}
+
+function refreshCurrDisplay() {
+  currDisplay.textContent = currOperation.join(" ");
 }
 
 // Logic
 /**
- * @returns True if the entering digit is joinable 
+ * @returns True if the entering digit is joinable
  * with the last element of currOperation
  */
-function isJoinable() {
+function isLastNumber() {
   last = Number(currOperation[currOperation.length - 1]);
   if (isNaN(last)) {
+    return false;
+  } else return true;
+}
+
+/**
+ * @returns True if the last element in currOperation
+ * is 0
+ */
+function isLastZero() {
+  last = Number(currOperation[currOperation.length - 1]);
+  if (last != 0) {
     return false;
   } else return true;
 }
@@ -62,7 +108,7 @@ function divide(a, b) {
 }
 
 /**
- * Returns the result of applying the operator to two operands
+ * Returns the result of applying the operator to two operands.
  * @param {*} operator A two-parameter function
  */
 function operate(operator, a, b) {
