@@ -83,3 +83,18 @@ button {
 .del-btn {
   background-color: #74bdcb;
 }
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #1F2937;
+  color: #F9FAF8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0px;
+  font-size: 16px;
+}
