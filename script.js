@@ -3,6 +3,7 @@ let prevOperation = [];
 let currOperation = [0];
 
 const numBtns = document.querySelectorAll(".nums");
+const zeroBtn = document.querySelector(".zero");
 const operatorBtns = document.querySelectorAll(".operator");
 const equalBtn = document.querySelector(".equal-btn");
 const clearBtn = document.querySelector(".clear-btn");
@@ -13,6 +14,13 @@ const currDisplay = document.querySelector(".currentOperationScreen");
 // UI and event handling
 
 function attachEventListenersToBtns() {
+  // Division by 0 handler
+  zeroBtn.addEventListener("click", () => {
+    if (currOperation[currOperation.length - 1] == "÷") {
+      alert("Division by 0, please try again.");
+      currOperation = [];
+    }
+  });
   // Numbers
   for (const numBtn of numBtns) {
     numBtn.addEventListener("click", () => {
@@ -55,15 +63,28 @@ function attachEventListenersToBtns() {
     currOperation = [0];
     refreshPrevDisplay();
     refreshCurrDisplay();
-  })
+  });
   // Delete
   delBtn.addEventListener("click", () => {
-    // TODO
-  })
+    deleteLast();
+    refreshCurrDisplay();
+  });
+}
+
+function deleteLast() {
+  if (isLastNumber() & (currOperation[currOperation.length - 1].length > 1)) {
+    currOperation[currOperation.length - 1] = currOperation[
+      currOperation.length - 1
+    ].slice(0, -1);
+  } else if (currOperation.length == 1) {
+    currOperation = [0];
+  } else {
+    currOperation.splice(currOperation.length - 1, 1);
+  }
 }
 
 function roundResult(value, decimals) {
-  return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+  return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
 }
 
 /**
