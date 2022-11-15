@@ -35,23 +35,66 @@ function attachEventListenersToBtns() {
   }
   // Equal
   equalBtn.addEventListener("click", () => {
-    if ((isLastNumber()) & (currOperation.length > 1)) {
+    if (isLastNumber() & (currOperation.length > 1)) {
       currOperation.push(equalBtn.dataset.key);
       shiftOperation();
       refreshPrevDisplay();
       let result = calculate(processOperation(prevOperation));
-      currOperation.push(result);
+      let roundedResult = roundResult(result, 2);
+      currOperation.push(roundedResult);
       refreshCurrDisplay();
-    }
-    else {
-      alert('Please complete operation.')
+    } else {
+      alert("Please complete operation.");
     }
   });
 }
 
-function processOperation(operation) {}
+function roundResult(value, decimals) {
+  return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+}
 
-function calculate(operation) {}
+/**
+ * @param {Array} operation The operation thats has Numbers as strings.
+ */
+function processOperation(operation) {
+  for (let i = 0; i < operation.length; i++) {
+    if (!isNaN(operation[i])) {
+      operation[i] = Number(operation[i]);
+    }
+  }
+  return operation;
+}
+
+/**
+ * @param {Array} operation Assume a "valid" operation array:
+ * "=" at the end and operator between numbers.
+ * @return {Number} result The result of the equation.
+ */
+function calculate(operation) {
+  for (let i = 0; i < operation.length; i++) {
+    if (operation[i] == "×" || operation[i] == "÷") {
+      operation[i - 1] = operate(
+        operation[i],
+        operation[i - 1],
+        operation[i + 1]
+      );
+      operation.splice(i, 2);
+      i -= 1;
+    }
+  }
+  for (let i = 0; i < operation.length; i++) {
+    if (operation[i] == "+" || operation[i] == "-") {
+      operation[i - 1] = operate(
+        operation[i],
+        operation[i - 1],
+        operation[i + 1]
+      );
+      operation.splice(i, 2);
+      i -= 1;
+    }
+  }
+  return operation[0];
+}
 
 function shiftOperation() {
   // Copy
