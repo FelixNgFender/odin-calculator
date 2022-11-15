@@ -5,6 +5,8 @@ let currOperation = [0];
 const numBtns = document.querySelectorAll(".nums");
 const operatorBtns = document.querySelectorAll(".operator");
 const equalBtn = document.querySelector(".equal-btn");
+const clearBtn = document.querySelector(".clear-btn");
+const delBtn = document.querySelector(".del-btn");
 const prevDisplay = document.querySelector(".lastOperationScreen");
 const currDisplay = document.querySelector(".currentOperationScreen");
 
@@ -40,13 +42,24 @@ function attachEventListenersToBtns() {
       shiftOperation();
       refreshPrevDisplay();
       let result = calculate(processOperation(prevOperation));
-      let roundedResult = roundResult(result, 2);
+      let roundedResult = roundResult(result, 4);
       currOperation.push(roundedResult);
       refreshCurrDisplay();
     } else {
       alert("Please complete operation.");
     }
   });
+  // Clear
+  clearBtn.addEventListener("click", () => {
+    prevOperation = [];
+    currOperation = [0];
+    refreshPrevDisplay();
+    refreshCurrDisplay();
+  })
+  // Delete
+  delBtn.addEventListener("click", () => {
+    // TODO
+  })
 }
 
 function roundResult(value, decimals) {
@@ -83,7 +96,7 @@ function calculate(operation) {
     }
   }
   for (let i = 0; i < operation.length; i++) {
-    if (operation[i] == "+" || operation[i] == "-") {
+    if (operation[i] == "+" || operation[i] == "−") {
       operation[i - 1] = operate(
         operation[i],
         operation[i - 1],
@@ -161,7 +174,7 @@ function operate(operator, a, b) {
     case "+":
       return add(a, b);
     case "−":
-      return substract(a, b);
+      return subtract(a, b);
     case "×":
       return multiply(a, b);
     case "÷":
